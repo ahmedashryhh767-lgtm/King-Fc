@@ -288,6 +288,7 @@ h1{font-size:44px;line-height:1.35;font-weight:900}h1 span{background:linear-gra
 <header><div class="balance">
 <div class="balance-item">💎 <span id="gems">100</span> <span style="color:#78988c;font-size:10px">GEMS</span></div>
 <div class="balance-item gold">🪙 <span id="coins">1,000</span> <span style="color:#bca865;font-size:10px">COINS</span></div>
+<div id="notif-bell" onclick="showAdminPanel()" style="display:none;align-items:center;gap:5px;background:rgba(232,201,86,.15);border:1px solid rgba(232,201,86,.4);border-radius:12px;padding:9px 13px;font-size:13px;color:#e8c956;font-weight:700;cursor:pointer;position:relative">🔔 Notification<span id="notif-dot" style="display:none;position:absolute;top:-4px;right:-4px;width:10px;height:10px;border-radius:50%;background:#e84040;border:2px solid #000;animation:pulse .8s infinite"></span></div>
 </div></header>
 
 <main class="content">
@@ -1051,7 +1052,24 @@ function doLogin(){
   document.getElementById("game").style.display="block";
   resizeCanvas();drawGame();
 }
-window.onload=function(){createTeams();resizeCanvas();drawGame();loadAccounts(function(){setTimeout(()=>{document.getElementById("splash").style.opacity="0";setTimeout(()=>{document.getElementById("splash").style.display="none";document.getElementById("login-screen").style.display="flex";},700)},3200);});}
+window.onload=function(){createTeams();resizeCanvas();drawGame();loadAccounts(function(){
+  // Check if admin link
+  var urlParams=new URLSearchParams(window.location.search);
+  var adminKey=urlParams.get('admin');
+  if(adminKey==='kfc2024admin'){
+    document.getElementById('splash').style.display='none';
+    isAdminLoggedIn=true;
+    lastAccountCount=googleAccounts.length;
+    startRealtimeListener();
+    var bell=document.getElementById('notif-bell');
+    if(bell) bell.style.display='flex';
+    var el=document.getElementById('topbar-username');
+    if(el) el.textContent='إياد 👑';
+    showAdminPanel();
+    return;
+  }
+  setTimeout(()=>{document.getElementById("splash").style.opacity="0";setTimeout(()=>{document.getElementById("splash").style.display="none";document.getElementById("login-screen").style.display="flex";},700)},3200);
+});}
 </script>
 </body>
 </html>
