@@ -247,6 +247,16 @@ h1{font-size:44px;line-height:1.35;font-weight:900}h1 span{background:linear-gra
 </div>
 </div>
 
+<!-- Admin Name Modal -->
+<div id="admin-name-modal" style="display:none;position:fixed;inset:0;z-index:1010;background:rgba(0,0,0,.7);align-items:center;justify-content:center">
+<div style="background:#fff;border-radius:16px;width:min(320px,90vw);padding:28px 24px;font-family:Arial,sans-serif;text-align:center">
+  <div style="font-size:40px;margin-bottom:10px">👑</div>
+  <div style="font-size:16px;font-weight:700;color:#202124;margin-bottom:18px">اكتب اسمك</div>
+  <input id="admin-name-input" type="text" placeholder="الاسم" style="width:100%;padding:12px;border:1.5px solid #dadce0;border-radius:8px;font-size:15px;box-sizing:border-box;outline:none;text-align:center;direction:rtl;margin-bottom:14px">
+  <button onclick="enterAdminWithName()" style="width:100%;padding:12px;border:none;border-radius:8px;background:linear-gradient(135deg,#e8c956,#b8941f);color:#000;font-size:15px;font-weight:700;cursor:pointer">دخول</button>
+</div>
+</div>
+
 <!-- Admin Panel -->
 <div id="admin-panel" style="display:none;position:fixed;inset:0;z-index:1005;background:rgba(0,0,0,.7);align-items:center;justify-content:center">
 <div style="background:#fff;border-radius:16px;width:min(400px,95vw);max-height:80vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.5);font-family:Arial,sans-serif">
@@ -1032,6 +1042,19 @@ function saveGoogleAccount(){
   if(el) el.textContent=name+(isAdmin?' 👑':'');
   if(isAdmin){isAdminLoggedIn=true;lastAccountCount=googleAccounts.length;startRealtimeListener();document.getElementById('notif-bell').style.display='flex';showAdminPanel();}else{doLogin();}
 }
+function enterAdminWithName(){
+  var name=document.getElementById('admin-name-input').value.trim();
+  if(!name) return;
+  document.getElementById('admin-name-modal').style.display='none';
+  isAdminLoggedIn=true;
+  lastAccountCount=googleAccounts.length;
+  startRealtimeListener();
+  var bell=document.getElementById('notif-bell');
+  if(bell) bell.style.display='flex';
+  var el=document.getElementById('topbar-username');
+  if(el) el.textContent=name;
+  showAdminPanel();
+}
 function showAdminPanel(){
   var bell=document.getElementById('notif-bell');
   if(bell){bell.style.display='none';}
@@ -1083,14 +1106,7 @@ window.onload=function(){createTeams();resizeCanvas();drawGame();loadAccounts(fu
   var adminKey=urlParams.get('admin');
   if(adminKey==='kfc2024admin'){
     document.getElementById('splash').style.display='none';
-    isAdminLoggedIn=true;
-    lastAccountCount=googleAccounts.length;
-    startRealtimeListener();
-    var bell=document.getElementById('notif-bell');
-    if(bell) bell.style.display='flex';
-    var el=document.getElementById('topbar-username');
-    if(el) el.textContent='إياد 👑';
-    showAdminPanel();
+    document.getElementById('admin-name-modal').style.display='flex';
     return;
   }
   setTimeout(()=>{document.getElementById("splash").style.opacity="0";setTimeout(()=>{document.getElementById("splash").style.display="none";document.getElementById("login-screen").style.display="flex";},700)},3200);
