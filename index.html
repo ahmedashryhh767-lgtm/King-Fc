@@ -974,12 +974,12 @@ function loadAccounts(cb){
     if(data && Array.isArray(data) && data.length>0){
       googleAccounts=data;
     } else {
-      googleAccounts=[{name:"إياد",email:"ahmedashryhh767@gmail.com",avatar:"إ",color:"#e8c956",admin:true}];
+      googleAccounts=[];
       saveAccounts();
     }
     if(cb) cb();
   }).catch(function(){
-    googleAccounts=[{name:"إياد",email:"ahmedashryhh767@gmail.com",avatar:"إ",color:"#e8c956",admin:true}];
+    googleAccounts=[];
     if(cb) cb();
   });
 }
