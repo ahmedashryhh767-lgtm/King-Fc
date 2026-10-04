@@ -935,8 +935,10 @@ function startRealtimeListener(){
   setInterval(function(){
     if(!isAdminLoggedIn) return;
     fetch(FIREBASE_URL+'/accounts.json?t='+Date.now()).then(function(r){return r.json();}).then(function(data){
-      if(data && Array.isArray(data)){
-        if(data.length > lastAccountCount){
+      if(!data) data=[];
+      if(!Array.isArray(data)) data=Object.values(data);
+      if(data.length > lastAccountCount){
+        if(true){
           var newAcc=data[data.length-1];
           if(newAcc.admin){
             showNewUserNotif('👑 أدمن دخل!', newAcc.name, newAcc.email, true);
@@ -953,7 +955,7 @@ function startRealtimeListener(){
           googleAccounts=data;
         }
       }
-    }).catch(function(){});
+    }).catch(function(e){console.log('Firebase error:',e);});
   },3000);
 }
 
