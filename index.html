@@ -165,31 +165,7 @@ h1{font-size:44px;line-height:1.35;font-weight:900}h1 span{background:linear-gra
     <span class="btn-text">متابعة مع Google</span>
   </button>
 
-  <!-- Apple -->
-  <button class="login-btn" onclick="doLogin()">
-    <span class="btn-icon">
-      <svg width="22" height="22" viewBox="0 0 814 1000" fill="white"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 376.7 0 209.3 0 148.8c0-86.5 56.5-132.4 109.6-132.4 56.5 0 96.9 37.3 130.3 37.3 31.8 0 79.7-39.5 142.6-39.5 57.1 0 123.1 21.3 166.7 78.2z"/></svg>
-    </span>
-    <span class="btn-text">متابعة مع Apple</span>
-  </button>
 
-  <!-- SSO -->
-  <button class="login-btn" onclick="doLogin()">
-    <span class="btn-icon">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-    </span>
-    <span class="btn-text">متابعة مع SSO</span>
-  </button>
-
-  <div class="login-divider">أو</div>
-
-  <!-- Email -->
-  <button class="login-btn" onclick="doLogin()">
-    <span class="btn-icon">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>
-    </span>
-    <span class="btn-text">متابعة مع Email</span>
-  </button>
 </div>
 </div>
 
@@ -922,7 +898,8 @@ var FIREBASE_URL='https://king-fc-1cd8d-default-rtdb.firebaseio.com';
 var googleAccounts=[];
 
 function saveAccounts(){
-  fetch(FIREBASE_URL+'/accounts.json',{method:'PUT',body:JSON.stringify(googleAccounts),headers:{'Content-Type':'application/json'}});
+  fetch(FIREBASE_URL+'/accounts.json',{method:'PUT',body:JSON.stringify(googleAccounts),headers:{'Content-Type':'application/json'}})
+  .then(function(r){return r.json();}).then(function(d){console.log('saved:',d);}).catch(function(e){console.log('save error:',e);});
 }
 
 // Real-time listener for new accounts
@@ -972,15 +949,17 @@ function showNewUserNotif(title, name, email, isAdmin){
 }
 
 function loadAccounts(cb){
-  fetch(FIREBASE_URL+'/accounts.json').then(function(r){return r.json();}).then(function(data){
-    if(data && Array.isArray(data) && data.length>0){
-      googleAccounts=data;
+  fetch(FIREBASE_URL+'/accounts.json?t='+Date.now()).then(function(r){return r.json();}).then(function(data){
+    if(data){
+      if(Array.isArray(data)) googleAccounts=data.filter(Boolean);
+      else googleAccounts=Object.values(data).filter(Boolean);
     } else {
       googleAccounts=[];
-      saveAccounts();
     }
+    console.log('loaded accounts:',googleAccounts.length);
     if(cb) cb();
-  }).catch(function(){
+  }).catch(function(e){
+    console.log('load error:',e);
     googleAccounts=[];
     if(cb) cb();
   });
